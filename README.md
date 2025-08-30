@@ -66,35 +66,6 @@ Camera/Video → Frame Extraction → YOLO Model → Object Detection → Bear F
 5. **Filtering**: Only keep detections where class='bear' and confidence > threshold
 6. **Visualization**: Draw green boxes around bears with confidence scores
 
-## Understanding YOLO
-
-YOLO (You Only Look Once) is a real-time object detection system that:
-- Processes entire images in a single neural network evaluation
-- Divides image into grid cells
-- Each cell predicts bounding boxes and class probabilities
-- Uses Non-Maximum Suppression to remove duplicate detections
-
-### Why YOLO for Bear Detection?
-
-- **Speed**: Can process 30-140 FPS depending on model size
-- **Accuracy**: Modern YOLO versions have excellent detection rates
-- **Versatility**: Pre-trained on diverse datasets including animals
-- **Efficiency**: Single-pass detection is computationally efficient
-
-## Key Parameters Explained
-
-### Confidence Threshold (0.0 - 1.0)
-- **0.3**: More detections, might include false positives
-- **0.5**: Balanced (default)
-- **0.7**: High confidence only, might miss some bears
-
-### Model Selection
-- **yolov8n**: 3 MB, 140 FPS on GPU, basic accuracy
-- **yolov8s**: 22 MB, 100 FPS on GPU, good accuracy
-- **yolov8m**: 50 MB, 60 FPS on GPU, better accuracy
-- **yolov8l**: 84 MB, 35 FPS on GPU, high accuracy
-- **yolov8x**: 131 MB, 20 FPS on GPU, best accuracy
-
 ## Common Commands
 
 ```bash
@@ -110,26 +81,6 @@ python bear_detection.py --source video.mp4 --no-display
 # Use second camera
 python bear_detection.py --source 1
 ```
-
-## Learning Path
-
-### Beginner (Start Here)
-1. Run the basic detection to see it work
-2. Try different confidence thresholds
-3. Test with different video sources
-4. Read about object detection basics
-
-### Intermediate
-1. Experiment with different YOLO models
-2. Modify the code to add logging
-3. Learn about neural networks and computer vision
-4. Try the Python API examples
-
-### Advanced
-1. Train custom model on bear-specific dataset
-2. Implement real-time tracking across frames
-3. Add species classification
-4. Optimize for embedded devices
 
 ## Troubleshooting
 
@@ -150,16 +101,6 @@ python bear_detection.py --source 1
 - Check camera permissions
 - Test with video file instead
 
-## Next Steps
-
-1. **Customize Detection**: Modify `bear_detection.py` to add your own features
-2. **Add Logging**: Save detections to CSV or database
-3. **Create Alerts**: Add email/SMS notifications when bears detected
-4. **Train Custom Model**: Use your own bear images for better accuracy
-5. **Build Interface**: Create web or mobile app using the detection API
-
-Close the detection window to stop the program.
-
 ### Python API Usage
 ```python
 from bear_detection import BearDetector
@@ -175,104 +116,6 @@ import cv2
 frame = cv2.imread('image.jpg')
 detections = detector.detect_bears(frame)
 ```
-
-## Technical Explanation
-
-### YOLO Architecture
-YOLO divides an image into a grid and predicts bounding boxes and class probabilities for each grid cell in a single forward pass. This makes it extremely fast compared to region-based methods.
-
-### Detection Pipeline
-1. **Pre-processing**: Input image is resized to model input size (typically 640x640)
-2. **Inference**: Neural network processes the image in one pass
-3. **Post-processing**: Non-maximum suppression removes duplicate detections
-4. **Filtering**: Class-specific filtering for bear-related classes
-
-### Model Variants
-- **YOLOv8n**: Nano - Fastest, lowest accuracy (3.2M parameters)
-- **YOLOv8s**: Small - Good balance (11.2M parameters)
-- **YOLOv8m**: Medium - Better accuracy (25.9M parameters)
-- **YOLOv8l**: Large - High accuracy (43.7M parameters)
-- **YOLOv8x**: Extra Large - Highest accuracy (68.2M parameters)
-
-## Key Concepts Explained
-
-### Confidence Threshold
-The confidence threshold (0-1) determines the minimum certainty required for a detection to be considered valid. Lower values = more detections but more false positives.
-
-### Bounding Boxes
-Rectangular boxes defined by coordinates (x1, y1, x2, y2) that indicate the location of detected objects in the image.
-
-### Non-Maximum Suppression (NMS)
-Algorithm that removes overlapping bounding boxes, keeping only the one with highest confidence score for each object.
-
-### Frames Per Second (FPS)
-Number of images the system can process per second. Depends on:
-- Model size
-- Hardware (CPU vs GPU)
-- Image resolution
-- Number of objects in scene
-
-## Performance Optimization
-
-### For Better Speed
-- Use smaller model (yolov8n or yolov8s)
-- Reduce input resolution
-- Enable GPU acceleration (CUDA)
-- Process every nth frame instead of all frames
-
-### For Better Accuracy
-- Use larger model (yolov8l or yolov8x)
-- Increase input resolution
-- Lower confidence threshold
-- Ensure good lighting and image quality
-
-## Troubleshooting
-
-### Common Issues
-
-**No detections:**
-- Check if confidence threshold is too high
-- Verify model is loaded correctly
-- Ensure input source is working
-- Test with a clear image of a bear
-
-**Low FPS:**
-- Switch to smaller model
-- Check if GPU is being used
-- Reduce video resolution
-- Close other applications
-
-**GPU not detected:**
-```python
-import torch
-print(torch.cuda.is_available())  # Should return True
-print(torch.cuda.device_count())   # Number of GPUs
-```
-
-## Understanding the Code
-
-### Core Components
-
-1. **BearDetector Class**: Main detection engine
-   - Loads and manages YOLO model
-   - Processes frames for detection
-   - Filters results for bear-specific classes
-
-2. **Detection Method**: Processes single frames
-   - Runs inference on image
-   - Extracts bounding boxes and confidence scores
-   - Filters for bear detections
-
-3. **Video Processing**: Handles continuous streams
-   - Captures frames from source
-   - Applies detection to each frame
-   - Displays results in real-time
-
-### Data Flow
-```
-Video Source → Frame Capture → YOLO Model → Detection Results → Filtering → Display
-```
-
 ## System Requirements
 
 ### Minimum
