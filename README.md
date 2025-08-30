@@ -14,11 +14,9 @@ The system uses a pre-trained YOLO (You Only Look Once) neural network to detect
 
 # Quick Start Guide
 
-## 5-Minute Setup
-
-### Step 1: Install Python Dependencies
+### Step 1: Install Requirements
 ```bash
-pip install ultralytics opencv-python torch torchvision numpy
+pip install -r requirements.txt
 ```
 
 ### Step 2: Run Setup
@@ -196,28 +194,6 @@ YOLO divides an image into a grid and predicts bounding boxes and class probabil
 - **YOLOv8l**: Large - High accuracy (43.7M parameters)
 - **YOLOv8x**: Extra Large - Highest accuracy (68.2M parameters)
 
-## Learning Resources
-
-### Computer Vision Fundamentals
-- **Object Detection Basics**: [Stanford CS231n Course](http://cs231n.stanford.edu/)
-- **YOLO Paper**: [Original YOLO Paper](https://arxiv.org/abs/1506.02640)
-- **YOLOv8 Documentation**: [Ultralytics Docs](https://docs.ultralytics.com/)
-
-### Deep Learning Concepts
-- **Convolutional Neural Networks**: [CNN Explainer](https://poloclub.github.io/cnn-explainer/)
-- **PyTorch Tutorials**: [Official PyTorch Tutorials](https://pytorch.org/tutorials/)
-- **Transfer Learning**: [TensorFlow Guide](https://www.tensorflow.org/tutorials/images/transfer_learning)
-
-### Practical Implementation
-- **OpenCV Python**: [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
-- **Real-time Object Detection**: [PyImageSearch Tutorials](https://pyimagesearch.com/category/object-detection/)
-- **YOLO Training Guide**: [Train Custom YOLO](https://blog.roboflow.com/how-to-train-yolov8/)
-
-### Wildlife Detection Specific
-- **Camera Trap ML**: [MegaDetector Project](https://github.com/microsoft/CameraTraps)
-- **Wildlife Conservation Tech**: [WILDLABS Resources](https://wildlabs.net/)
-- **Computer Vision for Conservation**: [Conservation AI](https://www.conservationai.co.uk/)
-
 ## Key Concepts Explained
 
 ### Confidence Threshold
@@ -310,9 +286,6 @@ Video Source → Frame Capture → YOLO Model → Detection Results → Filterin
 - 8GB+ RAM
 - NVIDIA GPU with CUDA support
 - 1080p+ camera
-
-## License
-MIT License - Free to use and modify
 
 ## Further Development Ideas
 
