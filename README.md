@@ -1,4 +1,4 @@
-# Bear Detection System - Simplified
+# Bear Detection System
 
 A minimal, focused implementation of bear detection using YOLOv8 computer vision model.
 
