@@ -80,6 +80,9 @@ python bear_detection.py --source video.mp4 --no-display
 
 # Use second camera
 python bear_detection.py --source 1
+
+# Set window size
+python bear_detection.py --width 1080 --height 720
 ```
 
 ## Troubleshooting
