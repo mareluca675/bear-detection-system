@@ -1,22 +1,7 @@
-# Bear Detection System Requirements
-# Install with: pip install -r requirements.txt
-
-# Core Computer Vision
+# Core dependencies for bear detection system
+ultralytics>=8.0.0
 opencv-python>=4.8.0
-opencv-contrib-python>=4.8.0
-
-# Deep Learning Framework
 torch>=2.0.0
 torchvision>=0.15.0
-
-# YOLO Implementation
-ultralytics>=8.2.0
-
-# Numerical Computing
 numpy>=1.24.0
-
-# Image Processing
 Pillow>=10.0.0
-
-# Configuration and Data
-PyYAML>=6.0

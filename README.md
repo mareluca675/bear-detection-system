@@ -1,293 +1,209 @@
-# 🐻 Bear Detection System
+# Bear Detection System - Simplified
 
-A high-performance, real-time bear detection system using state-of-the-art computer vision models. Designed for wildlife monitoring, safety applications, and research purposes.
+A minimal, focused implementation of bear detection using YOLOv8 computer vision model.
 
-## 🎯 Features
+## How It Works
 
-- **Real-time Detection**: Process video streams at 15-100+ FPS depending on hardware
-- **Multi-source Support**: USB cameras, RTSP streams (drones), video files
-- **High Accuracy**: Uses YOLOv8 models optimized for wildlife detection
-- **Modular Architecture**: Easy to extend and integrate with existing systems
-- **GPU Acceleration**: CUDA support for enhanced performance
-- **Temporal Filtering**: Reduces false positives through frame-to-frame analysis
-- **Alert System**: Real-time notifications when bears are detected
+The system uses a pre-trained YOLO (You Only Look Once) neural network to detect bears in real-time video streams. Here's the process:
 
-## 🚀 Quick Start
+1. **Video Input**: Captures frames from a camera or video file
+2. **Object Detection**: Each frame is processed by the YOLO model
+3. **Bear Identification**: The model identifies objects and their classes
+4. **Filtering**: Only bear detections above the confidence threshold are kept
+5. **Output**: Displays bounding boxes around detected bears
 
-### Option 1: Instant Detection (Simplest)
+## Installation
 
 ```bash
-# Just run the launcher - it handles everything!
-python bear_launcher.py
-```
-
-This will:
-- Auto-download the model if needed
-- Open your default camera
-- Start detecting bears immediately
-
-### Option 2: Full Installation
-
-```bash
-# 1. Clone the repository
+# Clone the repository
 git clone <your-repo-url>
 cd bear-detection-system
 
-# 2. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
-
-# 3. Run setup (downloads models, creates configs)
-python bear_setup_script.py
-
-# 4. Start detection
-python bear_detection_system.py
 ```
 
-## 📋 System Requirements
+## Usage
 
-### Minimum Requirements
+### Basic Usage
+```bash
+# Use default camera
+python bear_detection.py
+
+# Use specific camera
+python bear_detection.py --source 1
+
+# Process video file
+python bear_detection.py --source path/to/video.mp4
+
+# Adjust confidence threshold
+python bear_detection.py --confidence 0.3
+
+# Run without display (headless)
+python bear_detection.py --no-display
+```
+
+Close the detection window to stop the program.
+
+### Python API Usage
+```python
+from bear_detection import BearDetector
+
+# Initialize detector
+detector = BearDetector(model_path='yolov8x.pt', confidence_threshold=0.5)
+
+# Process video stream
+detector.process_video_stream(source=0, display=True)
+
+# Or detect in a single frame
+import cv2
+frame = cv2.imread('image.jpg')
+detections = detector.detect_bears(frame)
+```
+
+## Technical Explanation
+
+### YOLO Architecture
+YOLO divides an image into a grid and predicts bounding boxes and class probabilities for each grid cell in a single forward pass. This makes it extremely fast compared to region-based methods.
+
+### Detection Pipeline
+1. **Pre-processing**: Input image is resized to model input size (typically 640x640)
+2. **Inference**: Neural network processes the image in one pass
+3. **Post-processing**: Non-maximum suppression removes duplicate detections
+4. **Filtering**: Class-specific filtering for bear-related classes
+
+### Model Variants
+- **YOLOv8n**: Nano - Fastest, lowest accuracy (3.2M parameters)
+- **YOLOv8s**: Small - Good balance (11.2M parameters)
+- **YOLOv8m**: Medium - Better accuracy (25.9M parameters)
+- **YOLOv8l**: Large - High accuracy (43.7M parameters)
+- **YOLOv8x**: Extra Large - Highest accuracy (68.2M parameters)
+
+## Learning Resources
+
+### Computer Vision Fundamentals
+- **Object Detection Basics**: [Stanford CS231n Course](http://cs231n.stanford.edu/)
+- **YOLO Paper**: [Original YOLO Paper](https://arxiv.org/abs/1506.02640)
+- **YOLOv8 Documentation**: [Ultralytics Docs](https://docs.ultralytics.com/)
+
+### Deep Learning Concepts
+- **Convolutional Neural Networks**: [CNN Explainer](https://poloclub.github.io/cnn-explainer/)
+- **PyTorch Tutorials**: [Official PyTorch Tutorials](https://pytorch.org/tutorials/)
+- **Transfer Learning**: [TensorFlow Guide](https://www.tensorflow.org/tutorials/images/transfer_learning)
+
+### Practical Implementation
+- **OpenCV Python**: [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
+- **Real-time Object Detection**: [PyImageSearch Tutorials](https://pyimagesearch.com/category/object-detection/)
+- **YOLO Training Guide**: [Train Custom YOLO](https://blog.roboflow.com/how-to-train-yolov8/)
+
+### Wildlife Detection Specific
+- **Camera Trap ML**: [MegaDetector Project](https://github.com/microsoft/CameraTraps)
+- **Wildlife Conservation Tech**: [WILDLABS Resources](https://wildlabs.net/)
+- **Computer Vision for Conservation**: [Conservation AI](https://www.conservationai.co.uk/)
+
+## Key Concepts Explained
+
+### Confidence Threshold
+The confidence threshold (0-1) determines the minimum certainty required for a detection to be considered valid. Lower values = more detections but more false positives.
+
+### Bounding Boxes
+Rectangular boxes defined by coordinates (x1, y1, x2, y2) that indicate the location of detected objects in the image.
+
+### Non-Maximum Suppression (NMS)
+Algorithm that removes overlapping bounding boxes, keeping only the one with highest confidence score for each object.
+
+### Frames Per Second (FPS)
+Number of images the system can process per second. Depends on:
+- Model size
+- Hardware (CPU vs GPU)
+- Image resolution
+- Number of objects in scene
+
+## Performance Optimization
+
+### For Better Speed
+- Use smaller model (yolov8n or yolov8s)
+- Reduce input resolution
+- Enable GPU acceleration (CUDA)
+- Process every nth frame instead of all frames
+
+### For Better Accuracy
+- Use larger model (yolov8l or yolov8x)
+- Increase input resolution
+- Lower confidence threshold
+- Ensure good lighting and image quality
+
+## Troubleshooting
+
+### Common Issues
+
+**No detections:**
+- Check if confidence threshold is too high
+- Verify model is loaded correctly
+- Ensure input source is working
+- Test with a clear image of a bear
+
+**Low FPS:**
+- Switch to smaller model
+- Check if GPU is being used
+- Reduce video resolution
+- Close other applications
+
+**GPU not detected:**
+```python
+import torch
+print(torch.cuda.is_available())  # Should return True
+print(torch.cuda.device_count())   # Number of GPUs
+```
+
+## Understanding the Code
+
+### Core Components
+
+1. **BearDetector Class**: Main detection engine
+   - Loads and manages YOLO model
+   - Processes frames for detection
+   - Filters results for bear-specific classes
+
+2. **Detection Method**: Processes single frames
+   - Runs inference on image
+   - Extracts bounding boxes and confidence scores
+   - Filters for bear detections
+
+3. **Video Processing**: Handles continuous streams
+   - Captures frames from source
+   - Applies detection to each frame
+   - Displays results in real-time
+
+### Data Flow
+```
+Video Source → Frame Capture → YOLO Model → Detection Results → Filtering → Display
+```
+
+## System Requirements
+
+### Minimum
 - Python 3.8+
 - 4GB RAM
-- Webcam or video source
-- CPU: Intel i5 or equivalent
+- Any modern CPU
+- Webcam or video file
 
-### Recommended Requirements
+### Recommended
 - Python 3.10+
 - 8GB+ RAM
 - NVIDIA GPU with CUDA support
-- High-resolution camera (1080p+)
+- 1080p+ camera
 
-## 🏗️ Architecture
+## License
+MIT License - Free to use and modify
 
-```
-bear-detection-system/
-├── bear_detection_system.py   # Core detection engine
-├── bear_launcher.py           # Quick start script
-├── bear_setup_script.py       # Setup and configuration
-├── requirements.txt           # Python dependencies
-├── models/                    # Pretrained models
-│   ├── yolov8n.pt            # Nano (fastest, lowest accuracy)
-│   ├── yolov8s.pt            # Small
-│   ├── yolov8m.pt            # Medium (recommended)
-│   └── yolov8l.pt            # Large (better accuracy)
-│   └── yolov8x.pt            # Large (highest accuracy)
-├── config/                    # Configuration files
-│   ├── system_config.json    # Main settings
-│   ├── bear_dataset.yaml     # Dataset configuration
-│   └── training_config.yaml  # Training parameters
-├── data/                      # Dataset directory
-├── logs/                      # Detection logs
-└── screenshots/               # Saved detections
-```
+## Further Development Ideas
 
-## 💻 Usage Examples
-
-### Basic Camera Detection
-```python
-from bear_detection_system import BearDetectionSystem
-
-system = BearDetectionSystem()
-system.start_camera_detection(camera_id=0, display=True)
-```
-
-### Drone/RTSP Stream
-```python
-system = BearDetectionSystem()
-system.start_rtsp_detection("rtsp://drone_ip:8554/stream", display=True)
-```
-
-### Custom Configuration
-```python
-from bear_detection_system import BearDetectionSystem, SystemConfig
-
-config = SystemConfig(
-    model_path="yolov8l.pt",        # Use large model
-    confidence_threshold=0.3,        # Lower threshold
-    enable_gpu=True,                 # Force GPU
-    min_detection_area=5000         # Larger minimum size
-)
-
-system = BearDetectionSystem(config)
-system.start_camera_detection()
-```
-
-### Command Line Options
-```bash
-# Use different camera
-python bear_launcher.py --source 1
-
-# Use RTSP stream
-python bear_launcher.py --source "rtsp://192.168.1.100:8554/stream"
-
-# Adjust confidence threshold
-python bear_launcher.py --conf 0.3
-
-# Use different model
-python bear_launcher.py --model yolov8l.pt
-
-# Headless mode (no display)
-python bear_launcher.py --no-display
-```
-
-## 🎯 Performance Benchmarks
-
-| Model    | GPU (RTX 3070) | CPU (i7-10700) | Accuracy | Use Case |
-|----------|----------------|----------------|----------|----------|
-| YOLOv8n  | 140 FPS       | 35 FPS         | Good     | Edge devices |
-| YOLOv8s  | 100 FPS       | 20 FPS         | Better   | Balanced |
-| YOLOv8m  | 60 FPS        | 12 FPS         | High     | Recommended |
-| YOLOv8l  | 35 FPS        | 6 FPS          | Highest  | Maximum accuracy |
-
-## 🔧 Configuration
-
-### System Configuration (`config/system_config.json`)
-
-```json
-{
-  "detection": {
-    "model_path": "models/yolov8m.pt",
-    "confidence_threshold": 0.45,
-    "nms_threshold": 0.45,
-    "min_detection_area": 2000,
-    "enable_gpu": true,
-    "bear_class_names": ["bear", "black bear", "grizzly bear"]
-  },
-  "video": {
-    "target_fps": 30,
-    "resolution": [1280, 720]
-  },
-  "alerts": {
-    "enable_audio": true,
-    "confidence_threshold": 0.7
-  }
-}
-```
-
-## 🏋️ Training Custom Models
-
-If you have your own bear dataset:
-
-```python
-# 1. Prepare dataset in YOLO format
-# 2. Update config/bear_dataset.yaml
-# 3. Run training
-
-from bear_setup_script import BearModelTrainer
-
-trainer = BearModelTrainer("config/training_config.yaml")
-results = trainer.train()
-```
-
-## 🔌 Integration API
-
-The system provides a modular API for integration:
-
-```python
-# Custom detection callback
-def on_bear_detected(detections, frame):
-    for detection in detections:
-        print(f"Bear at {detection.bbox} with {detection.confidence:.2%} confidence")
-        # Send alert, save to database, etc.
-
-# Register callback
-pipeline.register_detection_callback(on_bear_detected)
-```
-
-## 🐛 Troubleshooting
-
-### Camera not opening
-- Check camera permissions
-- Ensure no other application is using the camera
-- Try different camera index (0, 1, 2...)
-
-### Low FPS
-- Switch to smaller model (yolov8n.pt or yolov8s.pt)
-- Enable GPU acceleration
-- Reduce resolution
-- Close other applications
-
-### No bears detected
-- Lower confidence threshold (--conf 0.3)
-- Ensure good lighting
-- Check camera focus
-- Try different model variant
-
-### GPU not detected
-```bash
-# Check CUDA availability
-python -c "import torch; print(torch.cuda.is_available())"
-
-# Install CUDA-enabled PyTorch
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-
-## 📊 Extending the System
-
-### Add New Animal Detection
-```python
-config.bear_class_names.extend(['wolf', 'mountain lion', 'moose'])
-```
-
-### Add Database Logging
-```python
-def log_to_database(detections, frame):
-    # Your database code here
-    pass
-
-pipeline.register_detection_callback(log_to_database)
-```
-
-### Add Email Alerts
-```python
-def send_alert(detections, frame):
-    if detections and max(d.confidence for d in detections) > 0.8:
-        # Send email/SMS alert
-        pass
-
-pipeline.register_detection_callback(send_alert)
-```
-
-## 🔐 Safety and Ethics
-
-- **Privacy**: System designed for wildlife detection only
-- **Data Storage**: No automatic cloud upload of recordings
-- **Conservation**: Supports wildlife research and protection
-- **Safety**: Helps prevent human-wildlife conflicts
-
-## 📚 References
-
-- [YOLOv8 Documentation](https://docs.ultralytics.com/)
-- [BearID Project](https://github.com/hypraptive/bearid)
-- [OpenCV Documentation](https://docs.opencv.org/)
-- [PyTorch Documentation](https://pytorch.org/docs/)
-
-## 🤝 Contributing
-
-Contributions are welcome! Areas of interest:
-- Improved bear-specific models
-- Additional wildlife detection
-- Performance optimizations
-- Mobile app integration
-- Cloud deployment solutions
-
-## 📜 License
-
-MIT License - See LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- Ultralytics for YOLOv8
-- BearID Project for dataset inspiration
-- OpenCV community
-- Wildlife conservation organizations
-
-## 📞 Support
-
-For issues, questions, or suggestions:
-- Open an issue on GitHub
-- Check the troubleshooting section
-- Review the documentation
-
----
-
-**Remember**: This system is a tool for wildlife monitoring and safety. Always maintain safe distances from wildlife and follow local regulations and guidelines.
+- Add detection logging to CSV/database
+- Implement alert system (email/SMS)
+- Add multi-camera support
+- Create web interface
+- Train custom model on bear-specific dataset
+- Add species classification (black bear vs grizzly)
+- Implement tracking across frames
+- Add motion detection pre-filter for efficiency
