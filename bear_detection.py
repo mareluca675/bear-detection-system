@@ -113,13 +113,15 @@ class BearDetector:
         
         return frame
     
-    def process_video_stream(self, source=0, display=True):
+    def process_video_stream(self, source=0, display=True, window_width=None, window_height=None):
         """
         Process video stream from camera or file
         
         Args:
             source: Camera index (0, 1, ...) or video file path
             display: Whether to show the video output
+            window_width: Display window width (pixels)
+            window_height: Display window height (pixels)
         """
         # Open video source
         cap = cv2.VideoCapture(source)
@@ -129,6 +131,11 @@ class BearDetector:
             return
         
         print("Processing video stream. Close window to exit.")
+        
+        # Set up window if custom size is specified
+        if display and window_width and window_height:
+            cv2.namedWindow('Bear Detection', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow('Bear Detection', window_width, window_height)
         
         frame_count = 0
         fps = 0
@@ -158,15 +165,20 @@ class BearDetector:
                     # Draw detections on frame
                     display_frame = self.draw_detections(frame.copy(), detections)
                     
+                    # Resize frame if window size is specified
+                    if window_width and window_height:
+                        display_frame = cv2.resize(display_frame, (window_width, window_height))
+                    
+                    # Get current frame dimensions
+                    height, width = display_frame.shape[:2]
+                    
                     # Add FPS in bottom left corner
-                    height = display_frame.shape[0]
                     fps_text = f"FPS: {fps:.1f}"
                     cv2.putText(display_frame, fps_text, (10, height - 10),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
                     
                     # Add "Bear detected." in top right corner if bears are present
                     if detections:
-                        width = display_frame.shape[1]
                         bear_text = "Bear detected."
                         text_size = cv2.getTextSize(bear_text, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)[0]
                         text_x = width - text_size[0] - 10
@@ -203,6 +215,10 @@ def main():
                        help='Path to YOLO model file')
     parser.add_argument('--confidence', type=float, default=0.5,
                        help='Minimum confidence threshold (0-1)')
+    parser.add_argument('--width', type=int, default=None,
+                       help='Display window width (e.g., 1280)')
+    parser.add_argument('--height', type=int, default=None,
+                       help='Display window height (e.g., 720)')
     parser.add_argument('--no-display', action='store_true',
                        help='Run without displaying video')
     
@@ -219,6 +235,8 @@ def main():
     print(f"  Source: {source}")
     print(f"  Model: {args.model}")
     print(f"  Confidence threshold: {args.confidence}")
+    if args.width and args.height:
+        print(f"  Window size: {args.width}x{args.height}")
     print(f"  Display: {not args.no_display}")
     print()
     
@@ -231,7 +249,9 @@ def main():
     # Start processing
     detector.process_video_stream(
         source=source,
-        display=not args.no_display
+        display=not args.no_display,
+        window_width=args.width,
+        window_height=args.height
     )
 
 
